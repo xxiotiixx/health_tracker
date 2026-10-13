@@ -9,7 +9,7 @@ class BmiCalculatorTest {
 
     @Test
     void calculatesBmi() {
-        assertEquals(99.99, BmiCalculator.calculate(70, 175), 0.01);
+        assertEquals(22.86, BmiCalculator.calculate(70, 175), 0.01);
     }
 
     @Test
