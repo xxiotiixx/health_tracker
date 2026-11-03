@@ -67,18 +67,18 @@ public final class TokenService {
 
     public AuthenticatedUser verify(String token) {
         if (token == null || token.isBlank()) {
-            throw new InvalidTokenException("Токен не вказано");
+            throw new IllegalArgumentException("Токен не вказано");
         }
         try {
             DecodedJWT jwt = verifier.verify(token);
             long userId = Long.parseLong(jwt.getSubject());
             String username = jwt.getClaim(USERNAME_CLAIM).asString();
             if (username == null || username.isBlank()) {
-                throw new InvalidTokenException("У токені немає імені користувача");
+                throw new IllegalArgumentException("У токені немає імені користувача");
             }
             return new AuthenticatedUser(userId, username);
         } catch (JWTVerificationException | NumberFormatException e) {
-            throw new InvalidTokenException("Недійсний токен", e);
+            throw new IllegalArgumentException("Недійсний токен", e);
         }
     }
 }
