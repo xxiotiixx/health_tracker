@@ -9,6 +9,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'at.favre.lib:bcrypt:0.10.2'
+    implementation 'com.auth0:java-jwt:4.4.0'
 }
 java {
     sourceCompatibility = JavaVersion.VERSION_17
