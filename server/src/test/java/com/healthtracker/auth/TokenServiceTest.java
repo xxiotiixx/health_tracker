@@ -45,14 +45,14 @@ class TokenServiceTest {
         Clock past = Clock.fixed(Instant.parse("2020-01-01T00:00:00Z"), ZoneOffset.UTC);
         TokenService oldService = new TokenService(SECRET, Duration.ofHours(1), past);
         String expired = oldService.issue(1, "alice_01");
-        assertThrows(InvalidTokenException.class, () -> service.verify(expired));
+        assertThrows(IllegalArgumentException.class, () -> service.verify(expired));
     }
 
     @Test
     void rejectsTokenSignedWithOtherSecret() {
         TokenService other = new TokenService(OTHER_SECRET, Duration.ofHours(1));
         String foreign = other.issue(1, "alice_01");
-        assertThrows(InvalidTokenException.class, () -> service.verify(foreign));
+        assertThrows(IllegalArgumentException.class, () -> service.verify(foreign));
     }
 
     @Test
@@ -63,14 +63,14 @@ class TokenServiceTest {
         String[] b = bob.split("\\.");
         String forged = a[0] + "." + b[1] + "." + a[2];   // чужі дані з підписом alice
         assertNotEquals(alice, forged);
-        assertThrows(InvalidTokenException.class, () -> service.verify(forged));
+        assertThrows(IllegalArgumentException.class, () -> service.verify(forged));
     }
 
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {"   ", "garbage", "a.b.c", "not.a.token", "eyJhbGciOiJub25lIn0.e30."})
     void rejectsMalformedTokens(String token) {
-        assertThrows(InvalidTokenException.class, () -> service.verify(token));
+        assertThrows(IllegalArgumentException.class, () -> service.verify(token));
     }
 
     @Test

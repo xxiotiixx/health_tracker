@@ -2,7 +2,6 @@ package com.healthtracker.profile;
 
 import com.healthtracker.calories.ActivityLevel;
 import com.healthtracker.calories.Gender;
-import com.healthtracker.db.DataAccessException;
 import com.healthtracker.db.Database;
 
 import java.sql.Connection;
@@ -12,12 +11,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
-public class JdbcProfileRepository implements ProfileRepository {
+public class JdbcProfileRepository{
     private final Database database;
     public JdbcProfileRepository(Database database) {
         this.database = database;
     }
-    @Override
     public void save(Profile profile) {
         String sql = "INSERT INTO profiles "
                 + "(user_id, height_cm, weight_kg, birth_date, gender, activity_level) "
@@ -36,10 +34,9 @@ public class JdbcProfileRepository implements ProfileRepository {
             statement.setString(6, profile.activity().name());
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Не вдалося зберегти профіль", e);
+            throw new IllegalStateException("Не вдалося зберегти профіль", e);
         }
     }
-    @Override
     public Optional<Profile> findByUserId(long userId) {
         String sql = "SELECT user_id, height_cm, weight_kg, birth_date, gender, activity_level "
                 + "FROM profiles WHERE user_id = ?";
@@ -59,7 +56,7 @@ public class JdbcProfileRepository implements ProfileRepository {
                 return Optional.empty();
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Не вдалося прочитати профіль", e);
+            throw new IllegalStateException("Не вдалося прочитати профіль", e);
         }
     }
 }

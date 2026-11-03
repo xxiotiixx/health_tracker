@@ -2,8 +2,6 @@ package com.healthtracker.integration;
 
 import com.healthtracker.auth.AuthService;
 import com.healthtracker.auth.AuthenticatedUser;
-import com.healthtracker.auth.AuthenticationException;
-import com.healthtracker.auth.DuplicateUsernameException;
 import com.healthtracker.auth.JdbcUserRepository;
 import com.healthtracker.auth.TokenService;
 import com.healthtracker.auth.User;
@@ -68,7 +66,7 @@ class DatabaseIntegrationTest {
     @Test
     void databaseRejectsDuplicateUsername() {
         users.create("alice_01", "hash-1");
-        assertThrows(DuplicateUsernameException.class, () -> users.create("alice_01", "hash-2"));
+        assertThrows(IllegalArgumentException.class, () -> users.create("alice_01", "hash-2"));
     }
 
     @Test
@@ -94,7 +92,7 @@ class DatabaseIntegrationTest {
         User user = auth.register("alice_01", "password1");
         AuthenticatedUser authenticated = tokens.verify(auth.login("alice_01", "password1"));
         assertEquals(user.id(), authenticated.userId());
-        assertThrows(AuthenticationException.class, () -> auth.login("alice_01", "wrong-pass1"));
+        assertThrows(IllegalArgumentException.class, () -> auth.login("alice_01", "wrong-pass1"));
 
         try (Connection c = DATABASE.getConnection();
              Statement s = c.createStatement();
